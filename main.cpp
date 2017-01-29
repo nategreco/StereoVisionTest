@@ -90,7 +90,7 @@ int main()
 	}
 
 	//Create pace setter to maintain FPS
-	PaceSetter camerapacer( 5 );
+	PaceSetter camerapacer( 5, "Main thread" );
 	
 	//Loop indefinitely
 	for ( ;; ) {
@@ -109,8 +109,8 @@ int main()
 		cv::flip( image1, image1, -1 );
 		
 		//Update windows
-		cv::imshow( "Output0", imagetemp );
-		cv::imshow( "Output1", imagetemp );
+		cv::imshow( "Output0", image0 );
+		cv::imshow( "Output1", image1 );
 		cv::waitKey( 1 );
 	
 		//Set pace
