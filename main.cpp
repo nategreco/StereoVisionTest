@@ -61,7 +61,7 @@ int main()
 
 	//Create camera 0
 	std::cout << "Creating camera 0..." << '\n';
-	raspicam::RaspiCam_Cv camera0( 0 );
+	raspicam::RaspiCam_Cv camera0();
 	//Set properties
 	camera0.set( CV_CAP_PROP_FRAME_WIDTH, kpixwidth );
 	camera0.set( CV_CAP_PROP_FRAME_HEIGHT, kpixheight );
@@ -69,14 +69,14 @@ int main()
 	//Create window
 	cv::namedWindow( "Output0", cv::WINDOW_NORMAL );
 	//Validate open
-	if ( !camera0.open() ) {
+	if ( !camera0.open( 0 ) ) {
 		std::cerr << "Error opening the camera 0" << '\n';
 		exit(-1);
 	}
 
 	//Create camera 1
 	std::cout << "Creating camera 1..." << '\n';
-	raspicam::RaspiCam_Cv camera1( 1 );
+	raspicam::RaspiCam_Cv camera1();
 	//Set properties
 	camera1.set( CV_CAP_PROP_FRAME_WIDTH, kpixwidth );
 	camera1.set( CV_CAP_PROP_FRAME_HEIGHT, kpixheight );
@@ -84,7 +84,7 @@ int main()
 	//Create window
 	cv::namedWindow( "Output1", cv::WINDOW_NORMAL );
 	//Validate open
-	if ( !camera1.open() ) {
+	if ( !camera1.open( 1 ) ) {
 		std::cerr << "Error opening the camera 1" << '\n';
 		exit(-1);
 	}
@@ -103,10 +103,6 @@ int main()
 		cv::Mat image1;
 		camera0.retrieve( image0 );
 		camera1.retrieve( image1 );
-
-		//Flip images
-		cv::flip( image0, image0, -1 );
-		cv::flip( image1, image1, -1 );
 		
 		//Update windows
 		cv::imshow( "Output0", image0 );
