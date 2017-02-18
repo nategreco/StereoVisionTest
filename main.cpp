@@ -88,6 +88,9 @@ int main()
 		std::cerr << "Error opening the camera 1" << '\n';
 		exit(-1);
 	}
+	
+	//Create disparity window
+	cv::namedWindow( "Output2", cv::WINDOW_NORMAL );
 
 	//Create pace setter to maintain FPS
 	PaceSetter camerapacer( 5, "Main thread" );
@@ -104,9 +107,15 @@ int main()
 		camera0.retrieve( image0 );
 		camera1.retrieve( image1 );
 		
+		//Create disparity map
+		cv::StereoBM* stereobm = cv::createStereoBM();
+		cv::Mat disparity;
+		stereobm->compute( image0, image1, disparity );
+		
 		//Update windows
 		cv::imshow( "Output0", image0 );
 		cv::imshow( "Output1", image1 );
+		cv::imshow( "Output2", disparity );
 		cv::waitKey( 1 );
 	
 		//Set pace
