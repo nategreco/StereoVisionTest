@@ -61,7 +61,7 @@ int main()
 
 	//Create camera 0
 	std::cout << "Creating camera 0..." << '\n';
-	raspicam::RaspiCam_Cv camera0();
+	raspicam::RaspiCam_Cv camera0;
 	//Set properties
 	camera0.set( CV_CAP_PROP_FRAME_WIDTH, kpixwidth );
 	camera0.set( CV_CAP_PROP_FRAME_HEIGHT, kpixheight );
@@ -76,7 +76,7 @@ int main()
 
 	//Create camera 1
 	std::cout << "Creating camera 1..." << '\n';
-	raspicam::RaspiCam_Cv camera1();
+	raspicam::RaspiCam_Cv camera1;
 	//Set properties
 	camera1.set( CV_CAP_PROP_FRAME_WIDTH, kpixwidth );
 	camera1.set( CV_CAP_PROP_FRAME_HEIGHT, kpixheight );
@@ -90,7 +90,7 @@ int main()
 	}
 	
 	//Create disparity window
-	cv::namedWindow( "Output2", cv::WINDOW_NORMAL );
+	//cv::namedWindow( "Output2", cv::WINDOW_NORMAL );
 
 	//Create pace setter to maintain FPS
 	PaceSetter camerapacer( 5, "Main thread" );
@@ -108,14 +108,14 @@ int main()
 		camera1.retrieve( image1 );
 		
 		//Create disparity map
-		cv::StereoBM* stereobm = cv::createStereoBM();
-		cv::Mat disparity;
-		stereobm->compute( image0, image1, disparity );
+		//v::StereoBM* stereobm = cv::createStereoBM();
+		//cv::Mat disparity;
+		//stereobm->compute( image0, image1, disparity );
 		
 		//Update windows
 		cv::imshow( "Output0", image0 );
 		cv::imshow( "Output1", image1 );
-		cv::imshow( "Output2", disparity );
+		//cv::imshow( "Output2", disparity );
 		cv::waitKey( 1 );
 	
 		//Set pace
