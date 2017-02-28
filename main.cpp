@@ -54,7 +54,7 @@
 
 int main()
 {
-	const int kpixwidth{ 800 };
+	const int kpixwidth{ 768 };		//Must be multiple of 128!
 	const int kpixheight{ 480 };
 	std::cout << "Program launched, capture image resolution will be " << kpixwidth <<
 				 "x" << kpixheight << '\n';
@@ -69,11 +69,14 @@ int main()
 	//Create window
 	cv::namedWindow( "Output0", cv::WINDOW_NORMAL );
 	//Validate open
-	if ( !camera0.open( 0 ) ) {
+	if ( !camera0.open() ) {
 		std::cerr << "Error opening the camera 0" << '\n';
 		exit(-1);
 	}
-
+	
+	//Set stereoscopic mode
+	camera0.setStereoMode(1, true, false);  //Need to get mmal enum's! 1 = side by side
+/*
 	//Create camera 1
 	std::cout << "Creating camera 1..." << '\n';
 	raspicam::RaspiCam_Cv camera1;
@@ -88,7 +91,7 @@ int main()
 		std::cerr << "Error opening the camera 1" << '\n';
 		exit(-1);
 	}
-	
+*/
 	//Create disparity window
 	//cv::namedWindow( "Output2", cv::WINDOW_NORMAL );
 
@@ -99,13 +102,13 @@ int main()
 	for ( ;; ) {
 		//Grab images - Will need to make simultaneous threads in future synchronization
 		camera0.grab();
-		camera1.grab();
+		//camera1.grab();
 
 		//Copy to cv::Mat
 		cv::Mat image0;
-		cv::Mat image1;
+		//cv::Mat image1;
 		camera0.retrieve( image0 );
-		camera1.retrieve( image1 );
+		//camera1.retrieve( image1 );
 		
 		//Create disparity map
 		//v::StereoBM* stereobm = cv::createStereoBM();
@@ -114,7 +117,7 @@ int main()
 		
 		//Update windows
 		cv::imshow( "Output0", image0 );
-		cv::imshow( "Output1", image1 );
+		//cv::imshow( "Output1", image1 );
 		//cv::imshow( "Output2", disparity );
 		cv::waitKey( 1 );
 	
