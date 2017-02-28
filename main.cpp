@@ -75,7 +75,10 @@ int main()
 	}
 	
 	//Set stereoscopic mode
-	camera0.setStereoMode(1, true, false);  //Need to get mmal enum's! 1 = side by side
+	if ( !camera0.setStereoMode(1, true, false) ) {  //Need to get mmal enum's! 1 = side by side
+		std::cerr << "Error setting stereoscopic mode" << '\n';
+		exit(-1);
+	}
 /*
 	//Create camera 1
 	std::cout << "Creating camera 1..." << '\n';
