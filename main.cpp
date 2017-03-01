@@ -54,7 +54,7 @@
 
 int main()
 {
-	const int kpixwidth{ 768 };		//Must be multiple of 128!
+	const int kpixwidth{ 768 * 2 };		//Must be multiple of 128!
 	const int kpixheight{ 480 };
 	std::cout << "Program launched, capture image resolution will be " << kpixwidth <<
 				 "x" << kpixheight << '\n';
@@ -66,17 +66,16 @@ int main()
 	camera0.set( CV_CAP_PROP_FRAME_WIDTH, kpixwidth );
 	camera0.set( CV_CAP_PROP_FRAME_HEIGHT, kpixheight );
 	camera0.set( CV_CAP_PROP_FORMAT, CV_8UC3 );
+	//Set stereoscopic mode
+	if ( !camera0.setStereoMode(1, false) ) {
+		std::cerr << "Error setting stereoscopic mode" << '\n';
+		exit(-1);
+	}
 	//Create window
 	cv::namedWindow( "Output0", cv::WINDOW_NORMAL );
 	//Validate open
 	if ( !camera0.open() ) {
 		std::cerr << "Error opening the camera 0" << '\n';
-		exit(-1);
-	}
-	
-	//Set stereoscopic mode
-	if ( !camera0.setStereoMode(1, true, false) ) {  //Need to get mmal enum's! 1 = side by side
-		std::cerr << "Error setting stereoscopic mode" << '\n';
 		exit(-1);
 	}
 /*
