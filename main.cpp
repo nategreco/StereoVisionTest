@@ -96,12 +96,12 @@ int main()
 		camera0.retrieve( image );
 		
 		//Split image
-		cv::Mat left{ cv::size(image.cols, image.rows / 2), image.type(), cv::Scalar(0) };
+		cv::Mat left{ cv::Size(image.cols, image.rows / 2), image.type(), cv::Scalar(0) };
 		image( cv::Rect(0, 0, image.cols, image.rows / 2) ).copyTo(
 			left(cv::Rect(0, 0, image.cols, image.rows / 2)));
 		cv::cvtColor( left, left, CV_BGR2GRAY );
 		
-		cv::Mat right{ cv::size(image.cols, image.rows / 2), image.type(), cv::Scalar(0) };
+		cv::Mat right{ cv::Size(image.cols, image.rows / 2), image.type(), cv::Scalar(0) };
 		image( cv::Rect(0, image.rows / 2, image.cols, image.rows / 2) ).copyTo(
 			right(cv::Rect(0, 0, image.cols, image.rows / 2)));
 		cv::cvtColor( right, right, CV_BGR2GRAY );
