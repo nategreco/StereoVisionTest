@@ -97,12 +97,12 @@ int main()
 		
 		//Split image
 		cv::Mat left{ cv::Size(image.cols, image.rows / 2), image.type(), cv::Scalar(0) };
-		image( cv::Rect(0, 0, image.cols, image.rows / 2) ).copyTo(
+		image( cv::Rect(0, image.rows / 2, image.cols, image.rows / 2) ).copyTo(
 			left(cv::Rect(0, 0, image.cols, image.rows / 2)));
 		cv::cvtColor( left, left, CV_BGR2GRAY );
 		
 		cv::Mat right{ cv::Size(image.cols, image.rows / 2), image.type(), cv::Scalar(0) };
-		image( cv::Rect(0, image.rows / 2, image.cols, image.rows / 2) ).copyTo(
+		image( cv::Rect(0, 0, image.cols, image.rows / 2) ).copyTo(
 			right(cv::Rect(0, 0, image.cols, image.rows / 2)));
 		cv::cvtColor( right, right, CV_BGR2GRAY );
 		
@@ -115,7 +115,7 @@ int main()
 		stereobm->compute( left, right, disparity );
 		
 		//Update windows
-		cv::imshow( "Original", image );
+		cv::imshow( "Original", left );
 		cv::imshow( "Disparity", disparity );
 		cv::waitKey( 1 );
 	
