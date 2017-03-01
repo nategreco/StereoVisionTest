@@ -47,6 +47,7 @@
 
 //3rd party libraries
 #include "opencv2/opencv.hpp"
+#include "calib3d.hpp"
 #include "raspicam/raspicam_cv.h"
 
 //DAPrototype source files
@@ -54,8 +55,8 @@
 
 int main()
 {
-	const int kpixwidth{ 800 * 2 };
-	const int kpixheight{ 480 };
+	const int kpixwidth{ 800 };
+	const int kpixheight{ 480 * 2 };
 	std::cout << "Program launched, capture image resolution will be " << kpixwidth <<
 				 "x" << kpixheight << '\n';
 
@@ -67,12 +68,12 @@ int main()
 	camera0.set( CV_CAP_PROP_FRAME_HEIGHT, kpixheight );
 	camera0.set( CV_CAP_PROP_FORMAT, CV_8UC3 );
 	//Set stereoscopic mode
-	if ( !camera0.setStereoMode(1) ) {
+	if ( !camera0.setStereoMode(2) ) {
 		std::cerr << "Error setting stereoscopic mode" << '\n';
 		exit(-1);
 	}
 	//Create window
-	cv::namedWindow( "Output0", cv::WINDOW_NORMAL );
+	cv::namedWindow( "Original", cv::WINDOW_NORMAL );
 	//Validate open
 	if ( !camera0.open() ) {
 		std::cerr << "Error opening the camera 0" << '\n';
@@ -80,7 +81,7 @@ int main()
 	}
 
 	//Create disparity window
-	//cv::namedWindow( "Output1", cv::WINDOW_NORMAL );
+	cv::namedWindow( "Disparity", cv::WINDOW_NORMAL );
 
 	//Create pace setter to maintain FPS
 	PaceSetter camerapacer( 5, "Main thread" );
@@ -91,17 +92,41 @@ int main()
 		camera0.grab();
 
 		//Copy to cv::Mat
-		cv::Mat image0;
-		camera0.retrieve( image0 );
+		cv::Mat image;
+		camera0.retrieve( image );
+		
+		//Split image
+		cv::Mat left, right;
+		image( cv::Rect(0,
+						kpixheight / 2,
+						image.cols,
+						image.rows -
+						kpixheight / 2) ).copyTo(left(cv::Rect(0,
+															   kpixheight / 2,
+															   image.cols,
+															   image.rows -
+															   kpixheight / 2)));
+		image( cv::Rect(0,
+						kpixheight / 2,
+						image.cols,
+						image.rows -
+						kpixheight / 2) ).copyTo(right(cv::Rect(0,
+															    kpixheight / 2,
+															    image.cols,
+															    image.rows -
+															    kpixheight / 2)));
 		
 		//Create disparity map
-		//v::StereoBM* stereobm = cv::createStereoBM();
-		//cv::Mat disparity;
-		//stereobm->compute( image0, image1, disparity );
+		cv::StereoBM* stereobm;
+		stereobm->create();
+		cv::Mat disparity;
+		
+		
+		stereobm->compute( left, right, disparity );
 		
 		//Update windows
-		cv::imshow( "Output0", image0 );
-		//cv::imshow( "Output1", disparity );
+		cv::imshow( "Original", image );
+		cv::imshow( "Disparity", disparity );
 		cv::waitKey( 1 );
 	
 		//Set pace
