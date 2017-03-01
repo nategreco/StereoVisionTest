@@ -47,7 +47,7 @@
 
 //3rd party libraries
 #include "opencv2/opencv.hpp"
-#include "calib3d.hpp"
+#include "opencv2/calib3d.hpp"
 #include "raspicam/raspicam_cv.h"
 
 //DAPrototype source files
