@@ -107,10 +107,16 @@ int main()
 		cv::cvtColor( right, right, CV_BGR2GRAY );
 		
 		//Create disparity map
-		cv::Ptr<cv::StereoBM> stereobm = cv::StereoBM::create();
+		cv::Ptr<cv::StereoBM> stereobm = cv::StereoBM::create(16, 37);	//default => (0, 21);
 		cv::Mat disparity{ left.size(), left.type(), cv::Scalar(0) };
-		
 		stereobm->compute( left, right, disparity );
+		
+		//Scale disparity map
+		double minVal = 0;
+		double maxVal = 0;
+		minMaxLoc(disparity, &minVal, &maxVal);
+		disparity.convertTo(disparity, CV_8UC1, 255 / (maxVal - minVal));
+		//cv::bitwise_not ( disparity, disparity );
 
 		//Update windows
 		cv::imshow( "Original", left );
