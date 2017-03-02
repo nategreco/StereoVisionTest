@@ -55,8 +55,8 @@
 
 int main()
 {
-	const int kpixwidth{ 800 };
-	const int kpixheight{ 480 * 2 };
+	const int kpixwidth{ 800 * 2 };
+	const int kpixheight{ 480 };
 	std::cout << "Program launched, capture image resolution will be " << kpixwidth <<
 				 "x" << kpixheight << '\n';
 
@@ -68,7 +68,7 @@ int main()
 	camera0.set( CV_CAP_PROP_FRAME_HEIGHT, kpixheight );
 	camera0.set( CV_CAP_PROP_FORMAT, CV_8UC3 );
 	//Set stereoscopic mode
-	if ( !camera0.setStereoMode(2) ) {
+	if ( !camera0.setStereoMode(1) ) {
 		std::cerr << "Error setting stereoscopic mode" << '\n';
 		exit(-1);
 	}
@@ -94,16 +94,16 @@ int main()
 		//Copy to cv::Mat
 		cv::Mat image;
 		camera0.retrieve( image );
-		
+
 		//Split image
-		cv::Mat left{ cv::Size(image.cols, image.rows / 2), image.type(), cv::Scalar(0) };
-		image( cv::Rect(0, image.rows / 2, image.cols, image.rows / 2) ).copyTo(
-			left(cv::Rect(0, 0, image.cols, image.rows / 2)));
+		cv::Mat left{ cv::Size(image.cols / 2, image.rows), image.type(), cv::Scalar(0) };
+		image( cv::Rect(image.cols / 2, 0, image.cols / 2, image.rows) ).copyTo(
+			left(cv::Rect(0, 0, image.cols / 2, image.rows)));
 		cv::cvtColor( left, left, CV_BGR2GRAY );
 		
-		cv::Mat right{ cv::Size(image.cols, image.rows / 2), image.type(), cv::Scalar(0) };
-		image( cv::Rect(0, 0, image.cols, image.rows / 2) ).copyTo(
-			right(cv::Rect(0, 0, image.cols, image.rows / 2)));
+		cv::Mat right{ cv::Size(image.cols / 2, image.rows), image.type(), cv::Scalar(0) };
+		image( cv::Rect(0, 0, image.cols / 2, image.rows) ).copyTo(
+			right(cv::Rect(0, 0, image.cols / 2, image.rows)));
 		cv::cvtColor( right, right, CV_BGR2GRAY );
 		
 		//Create disparity map
@@ -112,11 +112,11 @@ int main()
 		cv::Mat disparity;
 		
 		
-		stereobm->compute( left, right, disparity );
-		
+		//stereobm->compute( left, right, disparity );
+
 		//Update windows
 		cv::imshow( "Original", left );
-		cv::imshow( "Disparity", disparity );
+		cv::imshow( "Disparity", right);//disparity );
 		cv::waitKey( 1 );
 	
 		//Set pace
