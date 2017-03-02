@@ -108,7 +108,7 @@ int main()
 		
 		//Create disparity map
 		cv::Ptr<cv::StereoBM> stereobm = cv::StereoBM::create(16, 37);	//default => (0, 21);
-		cv::Mat disparity{ left.size(), left.type(), cv::Scalar(0) };
+		cv::Mat disparity;//{ left.size(), CV_8UC1, cv::Scalar(0) };
 		stereobm->compute( left, right, disparity );
 		
 		//Scale disparity map
