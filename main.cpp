@@ -109,14 +109,13 @@ int main()
 		//Create disparity map
 		cv::StereoBM* stereobm;
 		stereobm->create();
-		cv::Mat disparity;
+		cv::Mat disparity{ left.size(), left.type(), cv::Scalar(0) };
 		
-		
-		//stereobm->compute( left, right, disparity );
+		stereobm->compute( left, right, disparity );
 
 		//Update windows
 		cv::imshow( "Original", left );
-		cv::imshow( "Disparity", right);//disparity );
+		cv::imshow( "Disparity", disparity );
 		cv::waitKey( 1 );
 	
 		//Set pace
