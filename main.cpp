@@ -66,7 +66,7 @@ int main()
 	//Set properties
 	camera0.set( CV_CAP_PROP_FRAME_WIDTH, kpixwidth );
 	camera0.set( CV_CAP_PROP_FRAME_HEIGHT, kpixheight );
-	camera0.set( CV_CAP_PROP_FORMAT, CV_8UC3 );
+	camera0.set( CV_CAP_PROP_FORMAT, CV_8UC1 );
 	//Set stereoscopic mode
 	if ( !camera0.setStereoMode(1) ) {
 		std::cerr << "Error setting stereoscopic mode" << '\n';
@@ -105,17 +105,14 @@ int main()
 		//Split image
 		cv::Mat left{ cv::Size(image.cols / 2, image.rows), image.type(), cv::Scalar(0) };
 		image( cv::Rect(image.cols / 2, 0, image.cols / 2, image.rows) ).copyTo(
-			left(cv::Rect(0, 0, image.cols / 2, image.rows)));
-		cv::cvtColor( left, left, CV_BGR2GRAY );
-		
-		cv::Mat right{ cv::Size(image.cols / 2, image.rows), image.type(), cv::Scalar(0) };
+			left(cv::Rect(0, 0, image.cols / 2, image.rows)));		
+		cv::Mat right{ left.size(), left.type(), cv::Scalar(0) };
 		image( cv::Rect(0, 0, image.cols / 2, image.rows) ).copyTo(
 			right(cv::Rect(0, 0, image.cols / 2, image.rows)));
-		cv::cvtColor( right, right, CV_BGR2GRAY );
 		
 		//Create disparity map
 		cv::Ptr<cv::StereoBM> stereobm = cv::StereoBM::create(numDisparities * 16, blockSize * 2 + 1);//default => (0, 21);
-		cv::Mat disparity;//{ left.size(), CV_8UC1, cv::Scalar(0) };
+		cv::Mat disparity;
 		stereobm->compute( left, right, disparity );
 		
 		//Scale disparity map
