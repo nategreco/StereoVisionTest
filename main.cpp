@@ -107,8 +107,7 @@ int main()
 		cv::cvtColor( right, right, CV_BGR2GRAY );
 		
 		//Create disparity map
-		cv::StereoBM* stereobm;
-		stereobm->create();
+		cv::Ptr<cv::StereoBM> stereobm = cv::StereoBM::create();
 		cv::Mat disparity{ left.size(), left.type(), cv::Scalar(0) };
 		
 		stereobm->compute( left, right, disparity );
