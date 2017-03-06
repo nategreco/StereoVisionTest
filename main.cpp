@@ -74,13 +74,6 @@ int main()
 	}
 	//Create window
 	cv::namedWindow( "Original", cv::WINDOW_NORMAL );
-	//Create Trackbars
-	int numDisparities{ 1 };//0 };
-	cv::createTrackbar("numDisparities", "Original", &numDisparities, 10);
-	int blockSize{ 26 };//10 };
-	cv::createTrackbar("blockSize", "Original", &blockSize, 100);
-	int scaleFactor{ 12 };
-	cv::createTrackbar("scaleFactor", "Original", &scaleFactor, 100);
 	//Validate open
 	if ( !camera0.open() ) {
 		std::cerr << "Error opening the camera 0" << '\n';
@@ -89,6 +82,7 @@ int main()
 
 	//Create disparity window
 	cv::namedWindow( "Disparity", cv::WINDOW_NORMAL );
+	cv::namedWindow( "DisparityFiltered", cv::WINDOW_NORMAL );
 
 	//Create pace setter to maintain FPS
 	PaceSetter camerapacer( 5, "Main thread" );
@@ -110,21 +104,34 @@ int main()
 		image( cv::Rect(0, 0, image.cols / 2, image.rows) ).copyTo(
 			right(cv::Rect(0, 0, image.cols / 2, image.rows)));
 		
-		//Create disparity map
-		cv::Ptr<cv::StereoBM> stereobm = cv::StereoBM::create(numDisparities * 16, blockSize * 2 + 1);//default => (0, 21);
-		cv::Mat disparity;
-		stereobm->compute( left, right, disparity );
-		
-		//Scale disparity map
-		cv::Scalar mean;     
-		cv::Scalar std;
-		cv::meanStdDev( disparity, mean, std );
-		disparity.convertTo(disparity, CV_8UC1, std[0] / scaleFactor);
-		cv::bitwise_not ( disparity, disparity );
+		//Match and create filter
+		cv::Mat leftdisp;
+		cv::Mat rightdisp;
+		cv::Ptr<cv::StereoBM> leftmatcher = cv::StereoBM::create( 0, 21 );
+		cv::Ptr<cv::DisparityWLSFilter> wlsfilter = cv::createDisparityWLSFilter( leftmatcher );
+		cv::Ptr<cv::StereoMatcher> rightmatcher = cv::createRightMatcher( leftmatcher );
+		//cv::cvtColor( left,  left,  COLOR_BGR2GRAY );
+		//cv::cvtColor( right, right, COLOR_BGR2GRAY );
+		leftmatcher->compute( left, right, leftdisp );
+		rightmatcher->compute( right, left, rightdisp );
 
+		//Filter
+		cv::Mat filtereddisp;
+		//wlsfilter->setLambda( lambda );
+        //wlsfilter->setSigmaColor( sigma );
+        wlsfilter->filter( leftdisp, left, filtereddisp, rightdisp );
+		
+		//Display
+		cv::Mat rawdispvis;
+        cv::getDisparityVis( leftdisp, rawdispvis );
+        cv::Mat filtereddispvis;
+        cv::getDisparityVis( filtereddisp, filtereddispvis );
+
+		
 		//Update windows
-		cv::imshow( "Original", image );
-		cv::imshow( "Disparity", disparity );
+		cv::imshow( "Original", left );
+		cv::imshow( "Disparity", rawdispvis );
+		cv::imshow( "DisparityFiltered", filtereddispvis );
 		cv::waitKey( 1 );
 	
 		//Set pace
