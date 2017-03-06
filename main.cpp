@@ -48,6 +48,7 @@
 //3rd party libraries
 #include "opencv2/opencv.hpp"
 #include "opencv2/calib3d.hpp"
+#include "opencv2/ximgproc/disparity_filter.hpp"
 #include "raspicam/raspicam_cv.h"
 
 //DAPrototype source files
@@ -85,7 +86,7 @@ int main()
 	cv::namedWindow( "DisparityFiltered", cv::WINDOW_NORMAL );
 
 	//Create pace setter to maintain FPS
-	PaceSetter camerapacer( 5, "Main thread" );
+	PaceSetter camerapacer( 1, "Main thread" );
 	
 	//Loop indefinitely
 	for ( ;; ) {
@@ -108,8 +109,8 @@ int main()
 		cv::Mat leftdisp;
 		cv::Mat rightdisp;
 		cv::Ptr<cv::StereoBM> leftmatcher = cv::StereoBM::create( 0, 21 );
-		cv::Ptr<cv::DisparityWLSFilter> wlsfilter = cv::createDisparityWLSFilter( leftmatcher );
-		cv::Ptr<cv::StereoMatcher> rightmatcher = cv::createRightMatcher( leftmatcher );
+		cv::Ptr<cv::ximgproc::DisparityWLSFilter> wlsfilter = cv::ximgproc::createDisparityWLSFilter( leftmatcher );
+		cv::Ptr<cv::StereoMatcher> rightmatcher = cv::ximgproc::createRightMatcher( leftmatcher );
 		//cv::cvtColor( left,  left,  COLOR_BGR2GRAY );
 		//cv::cvtColor( right, right, COLOR_BGR2GRAY );
 		leftmatcher->compute( left, right, leftdisp );
@@ -123,9 +124,9 @@ int main()
 		
 		//Display
 		cv::Mat rawdispvis;
-        cv::getDisparityVis( leftdisp, rawdispvis );
+        cv::ximgproc::getDisparityVis( leftdisp, rawdispvis );
         cv::Mat filtereddispvis;
-        cv::getDisparityVis( filtereddisp, filtereddispvis );
+        cv::ximgproc::getDisparityVis( filtereddisp, filtereddispvis );
 
 		
 		//Update windows
