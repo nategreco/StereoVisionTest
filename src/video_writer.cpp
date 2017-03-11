@@ -1,10 +1,10 @@
 /******************************************************************************************
-  Date:    12.08.2016
+  Date:    03.10.2016
   Author:  Nathan Greco (Nathan.Greco@gmail.com)
 
   Project:
       DAPrototype: Driver Assist Prototype
-	  http://github.com/NateGreco/DAPrototype.git
+	  http://github.com/NateGreco/StereoVisionTest.git
 
   License:
 	  This software is licensed under GNU GPL v3.0
@@ -31,57 +31,48 @@
 #include "pace_setter_class.h"
 
 /*****************************************************************************************/
-void VideoWriterThread ( cv::Mat *orgimage,
-                         std::mutex *capturemutex,
-                         cv::Mat *modimage,
-                         std::mutex *displaymutex,
+void VideoWriterThread ( cv::Mat *image,
+                         std::mutex *mutex,
                          std::atomic<bool> *exitsignal )
 {
 
 	std::cout << "Video writer thread starting!" << '\n';
 	
 	//Create pace setter
-	PaceSetter videopacer(settings::cam::krecfps, "video writer");
-	
-	//Check image is initialized
-	if ( settings::cam::krecordorgimage ) {
-		while ( orgimage->empty() ) {
-			if (*exitsignal) {
-				return;
-			}
-			videopacer.SetPace();			
-		}		
-	} else {
-		while ( modimage->empty() ) {
-			if (*exitsignal) {
-				return;
-			}
-			videopacer.SetPace();
-		}		
-	}
+	const int krecfps{ 20 };
+	PaceSetter videopacer( krecfps, "video writer" );
 
-	std::string filepath;
-	cv::Size size;
+	for ( ;; ) {
+		//Check if cv::Mat initialized
+		mutex->lock();
+		if ( image->empty() ) break;
+		mutex->unlock();
+		
+		//Check for program exit
+		if (*exitsignal) {
+			return;
+		}
+		videopacer.SetPace();			
+	}		
 
-	if ( settings::cam::krecordorgimage ) {
-		filepath = settings::cam::kfilepath + settings::cam::korgfilename;
-		size = cv::Size(orgimage->cols, orgimage->rows);
-	} else {
-		filepath = settings::cam::kfilepath + settings::cam::kmodfilename;
-		size = cv::Size(modimage->cols, modimage->rows);
-	}
-				
+	//Set path and size
+	std::string filepath{ "\stereo.avi" };
+	mutex->lock();
+	cv::Size size{ image->cols, image->rows };
+	mutex->unlock();
+		
 	//Shift files
-	fileShift(filepath, settings::cam::kfilestokeep);
+	int filestokeep{ 20 };
+	fileShift(filepath, filestokeep);
 	
     FrameQueue queue;
 	StorageWorker storage{ queue,
 			               1,
 			               filepath,
 						   CV_FOURCC('D', 'I', 'V', 'X'),
-						   static_cast<double>(settings::cam::krecfps),
+						   static_cast<double>(krecfps),
 						   size,
-						   true };
+						   false };
 
     // And start the worker threads for each storage worker
     std::thread t_storagethread(&StorageWorker::Run, &storage);
@@ -89,21 +80,15 @@ void VideoWriterThread ( cv::Mat *orgimage,
 	//Create thread variables
 	std::chrono::high_resolution_clock::time_point startime{
 		std::chrono::high_resolution_clock::now() };
-	int32_t filelengthseconds{ 60 * settings::cam::kminperfile };
+	int32_t filelengthseconds{ 60 * 10 };
 
 	//Loop
 	while( !(*exitsignal) ) {
 		try {
 			//Normal Execution
-			if ( settings::cam::krecordorgimage ) {
-				capturemutex->lock();
-				queue.Push(orgimage->clone());
-				capturemutex->unlock();
-			} else {
-				displaymutex->lock();
-				queue.Push(modimage->clone());	
-				displaymutex->unlock();
-			}
+			mutex->lock();
+			queue.Push( *image->clone() );
+			mutex->unlock();
 			
 			//New file changeover
 			if (static_cast<long>(std::chrono::duration_cast<std::chrono::seconds>(
@@ -118,7 +103,7 @@ void VideoWriterThread ( cv::Mat *orgimage,
 				}
 				
 				//Shift files
-				fileShift(filepath, settings::cam::kfilestokeep);
+				fileShift(filepath, filestokeep);
 				
 				//Restart thread
 				queue.Restart();

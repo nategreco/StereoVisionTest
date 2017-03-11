@@ -1,10 +1,10 @@
 /******************************************************************************************
-  Date:    12.08.2016
+  Date:    03.10.2016
   Author:  Nathan Greco (Nathan.Greco@gmail.com)
 
   Project:
-      StereoVisionTest: Raspberry Pi Stereo Vision
-	  http://github.com/NateGreco/DAPrototype.git
+      DAPrototype: Driver Assist Prototype
+	  http://github.com/NateGreco/StereoVisionTest.git
 
   License:
 	  This software is licensed under GNU GPL v3.0
@@ -13,7 +13,6 @@
 
 //Standard libraries
 #include <iostream>
-#include <algorithm>
 #include <mutex>
 #include <atomic>
 #include <exception>
@@ -34,41 +33,38 @@ void CaptureImageThread( cv::Mat *capture,
 	std::cout << "Image capturer thread starting!" << '\n';
 
     //Create camera
-	raspicam::RaspiCam_Cv Camera;
+	raspicam::RaspiCam_Cv camera;
+	const int kpixwidth{ 854 * 2 };
+	const int kpixheight{ 480 };
 
 	//Set properties
-	Camera.set( CV_CAP_PROP_FRAME_WIDTH, settings::cam::kpixwidth );
-	Camera.set( CV_CAP_PROP_FRAME_HEIGHT, settings::cam::kpixheight );
-	Camera.set( CV_CAP_PROP_FORMAT, CV_8UC3 );
-
+	camera.set( CV_CAP_PROP_FRAME_WIDTH, kpixwidth );
+	camera.set( CV_CAP_PROP_FRAME_HEIGHT, kpixheight );
+	camera.set( CV_CAP_PROP_FORMAT, CV_8UC1 );
+	//Set stereoscopic mode
+	if ( !camera0.setStereoMode(1) ) {
+		std::cerr << "Error setting stereoscopic mode" << '\n';
+		exit(-1);
+	}
     //Open
-	if ( !Camera.open() ) {
+	if ( !camera.open() ) {
 		std::cerr << "Error opening the camera" << '\n';
 		exit(-1);
 	}
 	std::cout << "Camera opened succesfully!" << '\n';
 
 	//create pace setter
-	PaceSetter camerapacer( std::max(std::max(settings::disp::kupdatefps,
-											  settings::cam::krecfps),
-									 settings::ldw::kupdatefps),
-							"Image capturer");
+	PaceSetter camerapacer( 20,	"Image capturer" );
 
 	//Loop indefinitely
 	while( !(*exitsignal) ) {
 		try {
+			//Get image
 			cv::Mat newimage;
-			Camera.grab();
-			Camera.retrieve( newimage );
-			cv::flip( newimage, newimage, -1 );
-			//resize image
-			if ( newimage.rows != settings::cam::kpixheight ) {
-				cv::resize( newimage,
-							newimage,
-							cv::Size(settings::cam::kpixwidth,
-									 settings::cam::kpixheight) );
-			}
-			
+			camera.grab();
+			camera.retrieve( newimage );
+
+			//Update common cv::Mat
 			capturemutex->lock();
 			*capture = newimage;
 			capturemutex->unlock(); 

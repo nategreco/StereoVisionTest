@@ -1,10 +1,10 @@
 /******************************************************************************************
-  Date:    12.08.2016
+  Date:    03.10.2016
   Author:  Nathan Greco (Nathan.Greco@gmail.com)
 
   Project:
       DAPrototype: Driver Assist Prototype
-	  http://github.com/NateGreco/DAPrototype.git
+	  http://github.com/NateGreco/StereoVisionTest.git
 
   License:
 	  This software is licensed under GNU GPL v3.0
@@ -23,10 +23,8 @@
 #include "opencv2/opencv.hpp"
 
 /*****************************************************************************************/
-void VideoWriterThread ( cv::Mat *orgimage,
-                         std::mutex *capturemutex,
-                         cv::Mat *modimage,
-                         std::mutex *displaymutex,
+void VideoWriterThread ( cv::Mat *image,
+                         std::mutex *mutex,
                          std::atomic<bool> *exitsignal );
 int fileShift( std::string filename,
                int numOfFiles );

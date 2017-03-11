@@ -1,9 +1,9 @@
 /******************************************************************************************
-  Date:    28.01.2017
+  Date:    03.10.2016
   Author:  Nathan Greco (Nathan.Greco@gmail.com)
 
   Project:
-      StereoVisionTest: Raspberry Pi Stereo Vision
+      DAPrototype: Driver Assist Prototype
 	  http://github.com/NateGreco/StereoVisionTest.git
 
   License:
