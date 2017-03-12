@@ -24,8 +24,6 @@
 
 //Project libraries
 #include "pace_setter_class.h"
-#include "process_values_class.h"
-#include "xml_reader.h"
 
 //Preprocessor
 

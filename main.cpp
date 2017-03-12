@@ -1,5 +1,5 @@
 /******************************************************************************************
-  Date:    12.08.2016
+  Date:    03.10.2016
   Author:  Nathan Greco (Nathan.Greco@gmail.com)
 
   Project:
@@ -31,7 +31,7 @@
   History:
       Date         Author      Description
 -------------------------------------------------------------------------------------------
-      10.03.2016   N. Greco    Initial creation
+      03.10.2016   N. Greco    Initial creation
 ******************************************************************************************/
 
 
@@ -105,7 +105,7 @@ int main()
 	}
     
 	//Loop
-	while( !(*exitsignal) ) {
+	while( !exitsignal ) {
 		if ( (gpiopoll) ) GpioHandler( exitsignal );
 
 		//Set Pace

@@ -18,9 +18,6 @@
 //Standard libraries
 #include <atomic>
 
-//Project libraries
-#include "process_values_class.h"
-
 /*****************************************************************************************/
 bool GpioHandlerSetup();
 void GpioHandler( std::atomic<bool>& exitsignal );
