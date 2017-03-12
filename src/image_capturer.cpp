@@ -66,7 +66,7 @@ void CaptureImageThread( cv::Mat *capture,
 
 			//Update common cv::Mat
 			capturemutex->lock();
-			*capture = newimage;
+			newimage.copyTo( *capture );
 			capturemutex->unlock(); 
 
 			//Set pace
