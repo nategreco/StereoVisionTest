@@ -42,7 +42,7 @@ void CaptureImageThread( cv::Mat *capture,
 	camera.set( CV_CAP_PROP_FRAME_HEIGHT, kpixheight );
 	camera.set( CV_CAP_PROP_FORMAT, CV_8UC1 );
 	//Set stereoscopic mode
-	if ( !camera0.setStereoMode(1) ) {
+	if ( !camera.setStereoMode(1) ) {
 		std::cerr << "Error setting stereoscopic mode" << '\n';
 		exit(-1);
 	}

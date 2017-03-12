@@ -64,9 +64,10 @@ void DisplayUpdateThread( cv::Mat *image,
 		try {
 			//Get latest image
 			mutex->lock();
-			image( cv::Rect(kcolstart, 0, imagetemp->cols / 2, imagetemp->rows) )->copyTo(
-				imagetemp(cv::Rect(0, 0, imagetemp->cols / 2, imagetemp->rows)));
+			cv::Mat newimage{ image->clone() };
 			mutex->unlock();
+			newimage( cv::Rect(kcolstart, 0, imagetemp.cols / 2, imagetemp.rows) ).copyTo(
+				imagetemp(cv::Rect(0, 0, imagetemp.cols / 2, imagetemp.rows)));
 			cv::imshow( "Output", imagetemp );
 			cv::waitKey( 1 );
 			

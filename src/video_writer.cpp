@@ -28,6 +28,8 @@
 
 //Project libraries
 #include "video_writer.h"
+#include "frame_queue_class.h"
+#include "storage_worker_class.h"
 #include "pace_setter_class.h"
 
 /*****************************************************************************************/
@@ -56,7 +58,7 @@ void VideoWriterThread ( cv::Mat *image,
 	}		
 
 	//Set path and size
-	std::string filepath{ "\stereo.avi" };
+	std::string filepath{ "\\stereo.avi" };
 	mutex->lock();
 	cv::Size size{ image->cols, image->rows };
 	mutex->unlock();
@@ -87,7 +89,7 @@ void VideoWriterThread ( cv::Mat *image,
 		try {
 			//Normal Execution
 			mutex->lock();
-			queue.Push( *image->clone() );
+			queue.Push( image->clone() );
 			mutex->unlock();
 			
 			//New file changeover
