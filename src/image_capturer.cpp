@@ -34,7 +34,7 @@ void CaptureImageThread( cv::Mat *capture,
 
     //Create camera
 	raspicam::RaspiCam_Cv camera;
-	const int kpixwidth{ 854 * 2 };
+	const int kpixwidth{ 896 * 2 };
 	const int kpixheight{ 480 };
 
 	//Set properties
