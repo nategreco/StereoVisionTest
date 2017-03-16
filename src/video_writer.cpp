@@ -47,7 +47,10 @@ void VideoWriterThread ( cv::Mat *image,
 	for ( ;; ) {
 		//Check if cv::Mat initialized
 		mutex->lock();
-		if ( !(image->empty()) ) break;
+		if ( !image->empty() ) {
+			mutex->unlock();
+			break;
+		}
 		mutex->unlock();
 		
 		//Check for program exit
