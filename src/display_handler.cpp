@@ -53,7 +53,7 @@ void DisplayUpdateThread( cv::Mat *image,
 	//Create initial cv::Mat
 	mutex->lock();
 	cv::Mat imagetemp{ 480, 800, image->type(), cv::Scalar(0) };
-	const int kcolstart{ ((image->cols / 2) - 800) / 2 };
+	const int kcolstart{ ((image->cols / 2) - imagetemp.cols) / 2 };
 	mutex->unlock();
 
 	//Initialize display with first image
@@ -69,8 +69,8 @@ void DisplayUpdateThread( cv::Mat *image,
 			mutex->lock();
 			cv::Mat newimage{ image->clone() };
 			mutex->unlock();
-			newimage( cv::Rect(kcolstart, 0, imagetemp.cols / 2, imagetemp.rows) ).copyTo(
-				imagetemp(cv::Rect(0, 0, imagetemp.cols / 2, imagetemp.rows)));
+			newimage( cv::Rect(kcolstart, 0, imagetemp.cols, imagetemp.rows) ).copyTo(
+				imagetemp(cv::Rect(0, 0, imagetemp.cols, imagetemp.rows)));
 			cv::imshow( "Output", imagetemp );
 			cv::waitKey( 1 );
 			
