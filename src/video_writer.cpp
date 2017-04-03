@@ -61,7 +61,7 @@ void VideoWriterThread ( cv::Mat *image,
 	}		
 
 	//Set path and size
-	std::string filepath{ "\\stereo.avi" };
+	std::string filepath{ "/stereo.avi" };
 	mutex->lock();
 	cv::Size size{ image->cols, image->rows };
 	mutex->unlock();
