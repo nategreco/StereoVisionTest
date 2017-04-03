@@ -41,7 +41,7 @@ void VideoWriterThread ( cv::Mat *image,
 	std::cout << "Video writer thread starting!" << '\n';
 	
 	//Create pace setter
-	const int krecfps{ 20 };
+	const int krecfps{ 10 };
 	PaceSetter videopacer( krecfps, "video writer" );
 
 	for ( ;; ) {
@@ -85,7 +85,7 @@ void VideoWriterThread ( cv::Mat *image,
 	//Create thread variables
 	std::chrono::high_resolution_clock::time_point startime{
 		std::chrono::high_resolution_clock::now() };
-	int32_t filelengthseconds{ 60 * 10 };
+	int32_t filelengthseconds{ 60 * 5 };
 
 	//Loop
 	while( !(*exitsignal) ) {

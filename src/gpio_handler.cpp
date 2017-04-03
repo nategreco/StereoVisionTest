@@ -28,7 +28,7 @@
 //Preprocessor
 
 //Physical pin numbers
-#define POWERINPUTPIN 4
+#define POWERINPUTPIN 5
 
 /*****************************************************************************************/
 bool GpioHandlerSetup()
