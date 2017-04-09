@@ -41,7 +41,7 @@ void VideoWriterThread ( cv::Mat *image,
 	std::cout << "Video writer thread starting!" << '\n';
 	
 	//Create pace setter
-	const int krecfps{ 10 };
+	const int krecfps{ 5 };
 	PaceSetter videopacer( krecfps, "video writer" );
 
 	for ( ;; ) {

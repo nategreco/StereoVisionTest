@@ -54,7 +54,7 @@ void CaptureImageThread( cv::Mat *capture,
 	std::cout << "Camera opened succesfully!" << '\n';
 
 	//create pace setter
-	PaceSetter camerapacer( 10,	"Image capturer" );
+	PaceSetter camerapacer( 5,	"Image capturer" );
 
 	//Loop indefinitely
 	while( !(*exitsignal) ) {
